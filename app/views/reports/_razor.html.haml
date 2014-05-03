@@ -1,0 +1,18 @@
+.section
+  %h3 Razor
+  - if report.razors.present?
+    .section
+      %table.inspector.puppet_log
+        %thead
+          %tr
+            %th.log_level{:scope => :col} Level
+            %th.stdout{:scope => :col} StdOut
+            %th.stderr{:scope => :col} StdErr
+            %th.source{:scope => :col} Source
+            %th.file{:scope => :col} File
+            %th.time{:scope => :col} Time
+            %th.duration{:scope => :col} Duration Time (ms)
+        %tbody
+          = render :partial => 'puppet/util/razors/razor', :collection => puppet_log_sorter(report.razors.compact)
+  - else
+    %p= describe_no_matches_for(:razors, :report)

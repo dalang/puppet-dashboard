@@ -36,6 +36,8 @@
                 = icon(type)
                 = h message
         = yield
+      #container
+        = debug(params) if Rails.env.development?
       #footer
         %p
           = link_to raw("&copy; Copyright #{Time.now.year} Puppet Labs"), 'http://puppetlabs.com/'

@@ -7,7 +7,7 @@ module Puppet::Util; end
 
 # http://projects.puppetlabs.com/projects/puppet/wiki/Report_Format_2
 class Puppet::Transaction::Report
-  attr_accessor :host, :time, :logs, :metrics, :resource_statuses,
+  attr_accessor :host, :time, :logs, :metrics, :resource_statuses, :razors,
     :configuration_version, :report_format, :puppet_version, :kind, :status
 
   def self.generate(options)
@@ -15,6 +15,7 @@ class Puppet::Transaction::Report
       report.host = options[:hostname]
       report.time = DataGenerator.generate_time(options[:time_offset])
       report.logs = []
+      report.razors = []
       report.metrics = {}
       report.resource_statuses = {}
       report.configuration_version = Time.now.to_i
@@ -25,6 +26,16 @@ class Puppet::Transaction::Report
       options[:num_statuses].times do
         resource_status = DataGenerator.generate_resource_status(report, options)
         report.resource_statuses[resource_status.resource] = resource_status
+      end
+
+      options[:num_logs].times do
+        log = DataGenerator.generate_log(report, options)
+        report.logs << log
+      end
+
+      options[:num_razors].times do
+        razor = DataGenerator.generate_razor(report, options)
+        report.razors << razor
       end
 
       report.status = report.compute_status
@@ -43,6 +54,34 @@ class Puppet::Transaction::Report
 end
 class Puppet::Util::Log
   attr_accessor :file, :line, :level, :message, :source, :tags, :time
+
+  def self.generate(report, options)
+    Puppet::Util::Log.new.tap do |log|
+      log.file    = File.join("/", (1..(rand(5)+2)).map {DataGenerator.generate_word})
+      log.line    = rand(250) + 1
+      log.level   = "debug"
+      log.message = (1..(rand(5)+2)).map {DataGenerator.generate_word}.join(" ")
+      log.source  = 666
+      log.tags    = ["debug"]
+      log.time    = report.time
+    end
+  end
+end
+class Puppet::Util::Razor
+  attr_accessor :file, :level, :stdout, :stderr, :source, :tags, :time, :duration
+
+  def self.generate(report, options)
+    Puppet::Util::Razor.new.tap do |razor|
+      razor.file     = File.join("/", (1..(rand(5)+2)).map {DataGenerator.generate_word})
+      razor.level    = "debug"
+      razor.stdout   = (1..(rand(5)+2)).map {DataGenerator.generate_word}.join(" ")
+      razor.stderr   = (1..(rand(5)+2)).map {DataGenerator.generate_word}.join(" ")
+      razor.source   = "VModel"
+      razor.tags     = ["debug"]
+      razor.time     = report.time
+      razor.duration = rand(10000) + 1
+    end
+  end
 end
 class Puppet::Util::Metric
   attr_accessor :name, :label, :values
@@ -104,6 +143,14 @@ module DataGenerator
 
   def self.generate_resource_event(resource_status)
     Puppet::Transaction::Event.generate(resource_status)
+  end
+
+  def self.generate_log(report, options)
+    Puppet::Util::Log.generate(report, options)
+  end
+
+  def self.generate_razor(report, options)
+    Puppet::Util::Razor.generate(report, options)
   end
 
   def self.generate_resource_status(report, options)

@@ -111,6 +111,12 @@ $rounding_radius: 0.35em;
   }
 }
 
+@mixin box_sizing {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 body {
   background: #e8eef0;
   color: #444;
@@ -888,3 +894,11 @@ td.jqplot-table-legend-label {
   padding-left: 3px;
 }
 
+/* miscellaneous */
+.debug_dump {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 45px;
+  @include box_sizing;
+}

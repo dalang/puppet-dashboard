@@ -4,14 +4,15 @@ class Report < ActiveRecord::Base
 
   # See the after_destroy delete_resources method for more delete_all action
   has_many :logs,   :class_name => 'ReportLog',     :dependent => :delete_all
+  has_many :razors, :class_name => 'ReportRazor',   :dependent => :delete_all
   has_many :metrics,                                :dependent => :delete_all
   has_many :resource_statuses
   has_many :events, :through => :resource_statuses
 
-  accepts_nested_attributes_for :logs, :metrics, :resource_statuses, :events
+  accepts_nested_attributes_for :logs, :metrics, :resource_statuses, :events, :razors
 
   attr_accessible :host, :time, :status, :kind, :puppet_version, :configuration_version
-  attr_accessible :logs_attributes, :metrics_attributes, :resource_statuses_attributes, :events_attributes
+  attr_accessible :logs_attributes, :metrics_attributes, :resource_statuses_attributes, :events_attributes, :razors_attributes
 
   before_validation :assign_to_node
   validates_presence_of :host, :time, :kind
@@ -78,6 +79,7 @@ class Report < ActiveRecord::Base
   def self.attribute_hash_from(report_hash)
     attribute_hash = report_hash.dup
     attribute_hash["logs_attributes"] = attribute_hash.delete("logs")
+    attribute_hash["razors_attributes"] = attribute_hash.delete("razors")
     attribute_hash["resource_statuses_attributes"] = attribute_hash.delete("resource_statuses")
     attribute_hash["metrics_attributes"] = attribute_hash.delete("metrics")
     attribute_hash["resource_statuses_attributes"].each do |resource_status_hash|
@@ -101,6 +103,7 @@ class Report < ActiveRecord::Base
 
   def self.create_from_yaml_file(report_file, options = {})
     report = create_from_yaml(read_file_contents(report_file))
+    p report
     remove_file(report_file) if options[:delete] && report
     report
   end
@@ -191,7 +194,7 @@ class Report < ActiveRecord::Base
   def recalculate_report_status
     self.status = 'pending' if resource_statuses.any? {|rs| rs.status == 'pending' } &&
       resource_statuses.none? {|rs| rs.status == 'failed'}
-    self.status = 'failed' if self.logs.any? {|l| l.level == 'err' } 
+    self.status = 'failed' if self.logs.any? {|l| l.level == 'err' }
   end
 
   def add_missing_metrics
@@ -251,6 +254,7 @@ class Report < ActiveRecord::Base
       ResourceEvent.delete_all(:resource_status_id => status_ids)
       ResourceStatus.delete_all(:report_id => report_ids)
       ReportLog.delete_all(:report_id => report_ids)
+      ReportRazor.delete_all(:report_id => report_ids)
       Metric.delete_all(:report_id => report_ids)
       Report.delete_all(:id => report_ids)
     end

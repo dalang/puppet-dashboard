@@ -11,13 +11,15 @@ require 'data_generator'
 namespace :reports do
   namespace :samples do
 
-    desc "Generate NUM_REPORTS sample YAML reports for NUM_NODES nodes, each with NUM_STATUSES with NUM_EVENTS."
+    desc "Generate NUM_REPORTS sample YAML reports for NUM_NODES nodes, each with NUM_LOGS and NUM_STATUSES with NUM_EVENTS."
     task :generate do
       report_dir = 'tmp/sample_reports'
       ENV['REPORT_DIR'] = report_dir
       options = {
+        :num_logs     => (ENV['NUM_LOGS'] || 3).to_i,
         :num_statuses => (ENV['NUM_STATUSES'] || 3).to_i,
         :num_events   => (ENV['NUM_EVENTS']   || 3).to_i,
+        :num_razors   => (ENV['NUM_RAZORS'] || 3).to_i,
       }
       num_nodes = (ENV['NUM_NODES'] || 20).to_i
       num_reports = (ENV['NUM_REPORTS'] || 3).to_i

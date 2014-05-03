@@ -22,4 +22,18 @@
         = render report.logs
 
   .section
+    %h3 Razor
+    %table.inspector
+      %thead
+        %tr
+          %th{:scope => :col} Level
+          %th{:scope => :col} StdOut
+          %th{:scope => :col} StdErr
+          %th{:scope => :col} Source
+          %th{:scope => :col} Time
+          %th{:scope => :col} Duration
+      %tbody
+        = render report.razors
+
+  .section
     %pre= h report.pretty_inspect

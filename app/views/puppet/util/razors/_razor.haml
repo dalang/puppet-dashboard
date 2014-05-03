@@ -1,0 +1,13 @@
+%tr{:class => "puppet_log puppet_log_level_#{razor.level}"}
+  %td.level
+    %code= h razor.level
+  %td
+    %pre
+      %code= h razor.stdout
+  %td
+    %pre
+      %code= h razor.stderr
+  %td.wrap= h razor.source
+  %td.wrap= h wrap_on_slashes(razor.file)
+  %td.wrap= h razor.time
+  %td.wrap= h razor.duration

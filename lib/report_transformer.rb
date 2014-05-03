@@ -35,6 +35,9 @@ class ReportTransformer::ZeroToOne < ReportTransformer::ReportTransformation
     report["logs"].each do |log|
       log["version"] ||= log["source"] == "Puppet" ? "0.25.x" : nil
     end
+    report["razors"].each do |razor|
+      razor["version"] ||= razor["source"] == "Puppet" ? "0.25.x" : nil
+    end
     report
   end
 end
@@ -86,6 +89,9 @@ class ReportTransformer::OneToTwo < ReportTransformer::ReportTransformation
     end
     report["logs"].each do |log|
       log.delete("version")
+    end
+    report["razors"].each do |razor|
+      razor.delete("version")
     end
     report
   end

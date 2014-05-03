@@ -76,6 +76,15 @@ module ReportSanitizer #:nodoc:
       end
     end
 
+    class RazorSanitizer
+      def sanitize(raw)
+        Util.verify_attributes(raw, %w[stdout stderr source tags time duration level])
+        sanitized = Util.copy_attributes({}, raw, %w[file stdout stderr source tags time duration])
+        sanitized['level'] = raw['level'].to_s
+        sanitized
+      end
+    end
+
     class VersionLogSanitizer < LogSanitizer
       def sanitize(raw)
         sanitized = super
@@ -173,9 +182,11 @@ module ReportSanitizer #:nodoc:
   class FormatVersion2 < FormatVersion1
     def initialize(
       log_sanitizer    = LogSanitizer.new,
+      razor_sanitizer  = RazorSanitizer.new,
       metric_sanitizer = MetricSanitizer.new,
       status_sanitizer = ExtendedStatusSanitizer.new
     )
+      @razor_sanitizer    = razor_sanitizer
       super(log_sanitizer, metric_sanitizer, status_sanitizer)
     end
 
@@ -185,6 +196,7 @@ module ReportSanitizer #:nodoc:
 
     def sanitize(raw)
       sanitized = super
+      sanitized['razors']    = raw['razors'].map { |l| @razor_sanitizer.sanitize(l) }
       Util.verify_attributes(raw, %w[kind status puppet_version configuration_version])
       Util.copy_attributes(sanitized, raw, %w[kind status puppet_version configuration_version])
     end

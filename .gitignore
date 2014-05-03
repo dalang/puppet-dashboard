@@ -29,3 +29,6 @@
 # Ignore Ruby selection tools
 /.rvmrc
 /.rbenv
+
+*.swp
+/tags

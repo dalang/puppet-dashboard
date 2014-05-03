@@ -11,9 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140118072510) do
-
-  postgres = ActiveRecord::Base.connection.adapter_name.downcase =~ /postgres/
+ActiveRecord::Schema.define(:version => 20140503093237) do
 
   create_table "delayed_job_failures", :force => true do |t|
     t.string   "summary"
@@ -25,17 +23,16 @@ ActiveRecord::Schema.define(:version => 20140118072510) do
   end
 
   create_table "delayed_jobs", :force => true do |t|
-    t.integer  "priority",                       :default => 0
-    t.integer  "attempts",                       :default => 0
-    t.text     "handler",    :limit => 16777216			unless postgres
-    t.text     "handler"					if postgres
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
     t.text     "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
     t.string   "queue"
   end
 
@@ -143,21 +140,31 @@ ActiveRecord::Schema.define(:version => 20140118072510) do
   add_index "parameters", ["parameterable_id", "parameterable_type", "key"], :name => "index_parameters_multi"
 
   create_table "report_logs", :force => true do |t|
-    t.integer  "report_id",                :null => false
+    t.integer  "report_id", :null => false
     t.string   "level"
-    t.text     "message",   :limit => 255			unless postgres
-    t.text     "message"					if postgres
-    t.text     "source",    :limit => 255			unless postgres
-    t.text     "source"						if postgres
-    t.text     "tags",      :limit => 255			unless postgres
-    t.text     "tags"						if postgres
+    t.text     "message"
+    t.text     "source"
+    t.text     "tags"
     t.datetime "time"
-    t.text     "file",      :limit => 255			unless postgres
-    t.text     "file"						if postgres
+    t.text     "file"
     t.integer  "line"
   end
 
   add_index "report_logs", ["report_id"], :name => "index_report_logs_on_report_id"
+
+  create_table "report_razors", :force => true do |t|
+    t.integer  "report_id", :null => false
+    t.string   "level"
+    t.text     "stdout"
+    t.text     "stderr"
+    t.text     "source"
+    t.text     "tags"
+    t.datetime "time"
+    t.integer  "duration",  :null => false
+    t.text     "file"
+  end
+
+  add_index "report_razors", ["report_id"], :name => "index_report_razors_on_report_id"
 
   create_table "reports", :force => true do |t|
     t.integer  "node_id"
@@ -173,35 +180,28 @@ ActiveRecord::Schema.define(:version => 20140118072510) do
   add_index "reports", ["time", "node_id", "status"], :name => "index_reports_on_time_and_node_id_and_status"
 
   create_table "resource_events", :force => true do |t|
-    t.integer  "resource_status_id",                :null => false
-    t.text     "previous_value",     :limit => 255		unless postgres
-    t.text     "previous_value"					if postgres
-    t.text     "desired_value",      :limit => 255		unless postgres
-    t.text     "desired_value"					if postgres
-    t.text     "message",            :limit => 255		unless postgres
-    t.text     "message"					if postgres
+    t.integer  "resource_status_id", :null => false
+    t.text     "previous_value"
+    t.text     "desired_value"
+    t.text     "message"
     t.string   "name"
     t.string   "property"
     t.string   "status"
     t.datetime "time"
-    t.text     "historical_value",   :limit => 255		unless postgres
-    t.text     "historical_value"				if postgres
+    t.text     "historical_value"
     t.boolean  "audited"
   end
 
   add_index "resource_events", ["resource_status_id"], :name => "index_resource_events_on_resource_status_id"
 
   create_table "resource_statuses", :force => true do |t|
-    t.integer  "report_id",                                                       :null => false
+    t.integer  "report_id",                                        :null => false
     t.string   "resource_type"
-    t.text     "title",             :limit => 255		unless postgres
-    t.text     "title"						if postgres
-    t.decimal  "evaluation_time",                  :precision => 12, :scale => 6
-    t.text     "file",              :limit => 255		unless postgres
-    t.text     "file"						if postgres
+    t.text     "title"
+    t.decimal  "evaluation_time",   :precision => 12, :scale => 6
+    t.text     "file"
     t.integer  "line"
-    t.text     "tags",              :limit => 255		unless postgres
-    t.text     "tags"						if postgres
+    t.text     "tags"
     t.datetime "time"
     t.integer  "change_count"
     t.integer  "out_of_sync_count"

@@ -46,6 +46,11 @@ Registry.add_callback :core, :report_view_widgets, "700_log" do |view_renderer, 
   view_renderer.render 'reports/log', :report => report
 end
 
+# Razor VModel Report view widget
+Registry.add_callback :core, :report_view_widgets, "900_razor" do |view_renderer, report|
+  view_renderer.render 'reports/razor', :report => report
+end
+
 # Report status icon
 Registry.add_callback :report, :status_icon, "750_inspect_report" do |report|
   if report.kind == "inspect"
