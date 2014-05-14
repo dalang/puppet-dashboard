@@ -661,15 +661,24 @@ body {
         th.message {
           min-width: 30%;
         }
+        th.stdout {
+          min-width: 30%;
+        }
+        th.stderr {
+          min-width: 30%;
+        }
         th.line {
           width: 2em;
         }
+        th.duration {
+          width: 6em;
+        }
         @media screen and (min-width: 1024px) {
           th.source {
-            width: 20%;
+            width: 10%;
           }
           th.file {
-            width: 15%;
+            width: 10%;
           }
           th.time {
             width: 12em;
@@ -677,10 +686,10 @@ body {
         }
         @media screen and (max-width: 1023px) {
           th.source {
-            width: 12%;
+            width: 6%;
           }
           th.file {
-            width: 12%;
+            width: 8%;
           }
           th.time {
             width: 8%

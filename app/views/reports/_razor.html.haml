@@ -11,7 +11,7 @@
             %th.source{:scope => :col} Source
             %th.file{:scope => :col} File
             %th.time{:scope => :col} Time
-            %th.duration{:scope => :col} Duration Time (ms)
+            %th.duration{:scope => :col} Duration(ms)
         %tbody
           = render :partial => 'puppet/util/razors/razor', :collection => puppet_log_sorter(report.razors.compact)
   - else
