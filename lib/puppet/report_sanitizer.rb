@@ -196,7 +196,7 @@ module ReportSanitizer #:nodoc:
 
     def sanitize(raw)
       sanitized = super
-      sanitized['razors']    = raw['razors'].map { |l| @razor_sanitizer.sanitize(l) }
+      sanitized['razors']    = raw['razors'].map { |l| @razor_sanitizer.sanitize(l) } if raw['razors']
       Util.verify_attributes(raw, %w[kind status puppet_version configuration_version])
       Util.copy_attributes(sanitized, raw, %w[kind status puppet_version configuration_version])
     end

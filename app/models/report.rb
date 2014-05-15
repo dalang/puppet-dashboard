@@ -79,7 +79,7 @@ class Report < ActiveRecord::Base
   def self.attribute_hash_from(report_hash)
     attribute_hash = report_hash.dup
     attribute_hash["logs_attributes"] = attribute_hash.delete("logs")
-    attribute_hash["razors_attributes"] = attribute_hash.delete("razors")
+    attribute_hash["razors_attributes"] = attribute_hash.delete("razors") || []
     attribute_hash["resource_statuses_attributes"] = attribute_hash.delete("resource_statuses")
     attribute_hash["metrics_attributes"] = attribute_hash.delete("metrics")
     attribute_hash["resource_statuses_attributes"].each do |resource_status_hash|
@@ -103,7 +103,6 @@ class Report < ActiveRecord::Base
 
   def self.create_from_yaml_file(report_file, options = {})
     report = create_from_yaml(read_file_contents(report_file))
-    p report
     remove_file(report_file) if options[:delete] && report
     report
   end
