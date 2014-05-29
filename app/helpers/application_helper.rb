@@ -178,6 +178,11 @@ module ApplicationHelper
     end
   end
 
+  # Return +collection+ of Puppet::Util::Razor objects sorted by their severity level.
+  def puppet_razor_sorter(collection)
+    collection.sort_by { |instance| instance.time }
+  end
+
   def wrap_on_slashes(str)
     (h str).gsub("/","/<wbr />").html_safe
   end

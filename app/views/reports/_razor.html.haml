@@ -13,6 +13,6 @@
             %th.time{:scope => :col} Time
             %th.duration{:scope => :col} Duration(ms)
         %tbody
-          = render :partial => 'puppet/util/razors/razor', :collection => puppet_log_sorter(report.razors.compact)
+          = render :partial => 'puppet/util/razors/razor', :collection => puppet_razor_sorter(report.razors.compact)
   - else
     %p= describe_no_matches_for(:razors, :report)
